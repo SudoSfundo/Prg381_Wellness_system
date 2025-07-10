@@ -9,16 +9,20 @@
  */
 package servlet;
 
+import com.sun.jdi.connect.spi.Connection;
 
+import dao.DBUtil;
+import dao.UserDAO;
+import User.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-//import java.
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -38,19 +42,46 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        
+        try(Connection conn = DBUtil.getConnection()) {
+          User user = UserDAO.findByEmail(email, conn);
+          
+            if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
+                request.setAttribute("error", "Invalid credentials");
+                request.getRequestDispatcher("login.jsp").forward(request, response);
+                return;
+            }
+            
+            HttpSession session = request.getSession();
+            
+            session.setAttribute("studentNumber", user.getStudentNumber());
+            session.setAttribute("name", user.getName());
+            
+            response.sendRedirect("dashboard.jsp");
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Database Error");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
         }
+        
+//        response.setContentType("text/html;charset=UTF-8");
+//        try (PrintWriter out = response.getWriter()) {
+//            /* TODO output your page here. You may use following sample code. */
+//            out.println("<!DOCTYPE html>");
+//            out.println("<html>");
+//            out.println("<head>");
+//            out.println("<title>Servlet LoginServlet</title>");
+//            out.println("</head>");
+//            out.println("<body>");
+//            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+//            out.println("</body>");
+//            out.println("</html>");
+//        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

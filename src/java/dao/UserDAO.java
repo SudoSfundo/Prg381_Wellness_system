@@ -3,3 +3,9 @@
 // - emailExists(String email): checks for duplicate emails
 // - authenticate(String email, String password): fetches user for login
 // - Use prepared statements to prevent SQL injection
+
+package dao;
+
+public class UserDAO{
+    
+}
