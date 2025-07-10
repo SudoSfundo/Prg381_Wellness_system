@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author janco
+ * @author Barend Blom 600228
  */
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
 public class RegisterServlet extends HttpServlet {

@@ -9,8 +9,11 @@
  */
 package servlet;
 
+
+
 import java.io.IOException;
 import java.io.PrintWriter;
+//import java.
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author janco
+ * @author Barend Blom 600228
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
