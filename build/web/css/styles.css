@@ -1,9 +1,462 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : 10 Jul 2025, 10:14:29
-    Author     : janco
-*/
+/* =========================
+   Color Variables & Modes
+   ========================= */
+:root {
+    --background: #faf5ff;
+    --container-bg: #faf5ff;
+    --form-bg: #ffffff;
+    --overlay-gradient: #e9d5ff;
+    --overlay-text: #7c3aed;
+    --form-title: #7c3aed;
+    --input-bg: #faf5ff;
+    --input-border: #c4b5fd;
+    --input-text: #7c3aed;
+    --button-bg: #7c3aed;
+    --button-hover: #5b21b6;
+    --button-text: #fff;
+    --link: #7c3aed;
+    --box-shadow: 0 5px 15px rgba(124, 58, 237, 0.08);
+    --label-color: #7c3aed;
+}
+
+body.dark-mode {
+    --background: #18181b;
+    --container-bg: #18181b;
+    --form-bg: #27272a;
+    --overlay-gradient: #312e81;
+    --overlay-text: #fff;
+    --form-title: #8b5cf6;
+    --input-bg: #18181b;
+    --input-border: #a78bfa;
+    --input-text: #c4b5fd;
+    --button-bg: #8b5cf6;
+    --button-hover: #6d28d9;
+    --button-text: #fff;
+    --link: #a78bfa;
+    --box-shadow: 0 5px 15px rgba(139, 92, 246, 0.12);
+    --label-color: #fff;
+}
+
+/* =========================
+   Base Styles
+   ========================= */
+@import url('https://fonts.googleapis.com/css2?family=Anek+Latin:wght@100..800&family=Bebas+Neue&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Anek Latin", sans-serif;
+    background: var(--background);
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* =========================
+   Centering Wrapper
+   ========================= */
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    background: var(--background);
+}
+
+/* =========================
+   Split Page Layout
+   ========================= */
+.split-container {
+    display: flex;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+    background-color: var(--container-bg);
+    border-radius: 30px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    margin-top: 0;
+    position: relative;
+}
+
+.split-overlay {
+    width: 50%;
+    background: var(--overlay-gradient);
+    color: var(--overlay-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px 0 0 30px;
+}
+
+.split-overlay h1 {
+    font-family: "Bebas Neue", sans-serif;
+    margin-bottom: 0.2rem;
+}
+
+.split-overlay p {
+    font-family: "Bebas Neue", sans-serif;
+    margin-bottom: 4rem;
+}
+
+.split-overlay-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    padding: 35px;
+    gap: 10px;
+}
+
+.split-form {
+    width: 50%;
+    background-color: var(--form-bg);
+    border-radius: 0 30px 30px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.split-form form {
+    width: 100%;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.split-form h1 {
+    text-align: center;
+    color: var(--form-title);
+    font-weight: 500;
+    font-family: "Bebas Neue", sans-serif;
+}
+
+/* =========================
+   Form Elements
+   ========================= */
+button {
+    border: 0;
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    min-width: 120px;
+    width: 60%;
+    max-width: 220px;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 0 auto;
+}
+
+button:hover {
+    background-color: var(--button-hover);
+    color: var(--button-text);
+}
+
+a {
+    text-decoration: none;
+    color: var(--link);
+    font-size: 12px;
+}
+
+label {
+    color: var(--label-color);
+    font-size: 1rem;
+    margin-bottom: 2px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.input-field {
+    background-color: var(--input-bg);
+    border: none;
+    border-bottom: 2px solid var(--input-border);
+    padding: 12px;
+    margin-top: 5px;
+    width: 100%;
+    color: var(--input-text);
+}
+
+/* =========================
+   Theme Toggle Button
+   ========================= */
+.theme-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background: var(--form-bg);
+    color: var(--form-title);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.7rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--overlay-gradient);
+    color: var(--overlay-text);
+}
+
+/* =========================
+   Header Styles
+   ========================= */
+.main-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 32px 40px 30px 40px;
+    background: var(--form-bg);
+    box-sizing: border-box;
+    border-bottom: 3px solid #c4b5fd;
+}
+
+body.dark-mode .main-header {
+    border-bottom: 3px solid #8b5cf6;
+}
+
+.main-header-left .campus-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 2.5rem;
+    color: var(--form-title);
+    margin: 0;
+    letter-spacing: 2px;
+}
+
+.main-header-left .wellness-subtitle {
+    font-size: 1.2rem;
+    color: var(--form-title);
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.main-header-right {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    position: relative;
+    min-width: 220px; /* Ensure space for theme button */
+}
+
+.user-status {
+    font-size: 1rem;
+    color: var(--form-title);
+    background: var(--form-bg);
+    padding: 8px 18px;
+    border-radius: 20px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 8px;
+    margin-right: 60px; /* Add space to the right for theme button */
+}
+
+.user-status.logged-in {
+    background: var(--overlay-gradient);
+    color: var(--overlay-text);
+}
+
+/* =========================
+   Home Page
+   ========================= */
+.home-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.welcome-section {
+    max-width: 600px;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.welcome-section h1 {
+    font-size: 2.5rem;
+    font-family: "Bebas Neue", sans-serif;
+    color: var(--form-title);
+    margin-bottom: 1rem;
+}
+
+.welcome-section p {
+    font-size: 1.2rem;
+    color: var(--input-text);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.home-links {
+    display: flex;
+    gap: 24px;
+    margin-top: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-btn, .dashboard-btn {
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+    background: var(--button-bg);
+    color: var(--button-text);
+}
+
+.home-btn:hover, .dashboard-btn:hover {
+    background: var(--button-hover);
+    color: var(--button-text);
+    box-shadow: 0 10px 20px var(--box-shadow);
+}
+
+.home-btn-secondary, .dashboard-btn-secondary {
+    background: transparent;
+    color: var(--button-bg);
+    border: 2px solid var(--button-bg);
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 150px;
+    transition: all 0.3s ease;
+}
+
+.home-btn-secondary:hover, .dashboard-btn-secondary:hover {
+    background: var(--button-bg);
+    color: var(--button-text);
+}
+
+/* =========================
+   Dashboard Page
+   ========================= */
+.dashboard-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 60vh;
+}
+
+.dashboard-welcome {
+    max-width: 600px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.dashboard-welcome h1 {
+    font-size: 2rem;
+    font-family: "Bebas Neue", sans-serif;
+    color: var(--form-title);
+    margin-bottom: 1rem;
+}
+
+.dashboard-welcome p {
+    font-size: 1.1rem;
+    color: var(--input-text);
+    margin-bottom: 2rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.dashboard-card {
+    background: var(--form-bg);
+    border: 1px solid var(--box-shadow);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    box-shadow: var(--box-shadow);
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    border-color: var(--button-bg);
+}
+
+.dashboard-card h3 {
+    color: var(--form-title);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-card p {
+    color: var(--input-text);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-btn, .dashboard-btn-secondary {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.dashboard-logout {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+/* =========================
+   Responsive Design
+   ========================= */
+@media (max-width: 768px) {
+    .main-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    .main-header-left .campus-title {
+        font-size: 1.5rem;
+    }
+    .main-header-left .wellness-subtitle {
+        font-size: 1rem;
+    }
+    .welcome-section h1, .dashboard-welcome h1 {
+        font-size: 1.5rem;
+    }
+    .home-links, .dashboard-grid {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   Utility Classes
+   ========================= */
 
