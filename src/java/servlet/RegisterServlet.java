@@ -12,11 +12,12 @@
 package servlet;
 
 //import com.sun.jdi.connect.spi.Connection;
-import com.sun.jdi.connect.spi.Connection;
+//import com.sun.jdi.connect.spi.Connection;
+import org.mindrot.jbcrypt.BCrypt;
 
 import dao.DBUtil;
 import dao.UserDAO;
-import User.User;
+import model.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,7 +33,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
 public class RegisterServlet extends HttpServlet {
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.

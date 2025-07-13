@@ -9,11 +9,12 @@
  */
 package servlet;
 
-import com.sun.jdi.connect.spi.Connection;
+//import com.sun.jdi.connect.spi.Connection;
+import org.mindrot.jbcrypt.BCrypt;
 
 import dao.DBUtil;
 import dao.UserDAO;
-import User.User;
+import model.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -57,8 +58,8 @@ public class LoginServlet extends HttpServlet {
             
             HttpSession session = request.getSession();
             
-            session.setAttribute("studentNumber", user.getStudentNumber());
-            session.setAttribute("name", user.getName());
+            session.setAttribute("studentNumber", User.getStudentNumber());
+            session.setAttribute("name", User.getName());
             
             response.sendRedirect("dashboard.jsp");
             
