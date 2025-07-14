@@ -10,7 +10,7 @@
 package servlet;
 
 
-
+// imports 
 import dao.DBUtil;
 import dao.UserDAO;
 import model.User;
@@ -47,13 +47,14 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         
+        // check if inputs are filled in 
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-    request.setAttribute("error", "Email and password are required");
-    request.getRequestDispatcher("login.jsp").forward(request, response);
-    return;
-}
+            request.setAttribute("error", "Email and password are required");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
 
-        
+        // Create connection
         try(Connection conn = DBUtil.getConnection()) {
           User user = UserDAO.findByEmail(email, conn);
           
@@ -68,6 +69,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("studentNumber", user.getStudentNumber());
             session.setAttribute("name", user.getName());
             
+            // Go to Dashboard
             response.sendRedirect("dashboard.jsp");
             
             

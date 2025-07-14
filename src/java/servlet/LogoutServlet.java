@@ -8,8 +8,10 @@
  */
 package servlet;
 
+//imports
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -36,8 +38,13 @@ public class LogoutServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
+        // Get the current session, if it exists
+        // If the session does not exist, it will return null
         HttpSession session = request.getSession(false);
-        
+
+
+        // Invalidate the session if it exists
+        // This will remove all attributes and invalidate the session
         if (session != null) {
             session.invalidate();
         }
@@ -91,6 +98,7 @@ public class LogoutServlet extends HttpServlet {
      *
      * @return a String containing servlet description
      */
+    
     @Override
     public String getServletInfo() {
         return "Short description";

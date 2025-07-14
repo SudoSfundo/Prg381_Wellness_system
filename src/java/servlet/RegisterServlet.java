@@ -11,7 +11,7 @@
  */
 package servlet;
 
-
+// imports
 import dao.DBUtil;
 import dao.UserDAO;
 import model.User;
@@ -43,10 +43,13 @@ public class RegisterServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
 
+    // Method to validate email format
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$", email);
     }
 
+    // Method to check if a field is not empty
+    // This is used to ensure that required fields are filled in
     private boolean isNotEmpty(String field) {
         return field != null && !field.trim().isEmpty();
     }
@@ -55,6 +58,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // Retrieve form data
         String studentNo = request.getParameter("student_number");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
@@ -62,14 +66,16 @@ public class RegisterServlet extends HttpServlet {
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
         
-               // Basic validation
+        // Basic validation
         if (!isNotEmpty(studentNo) || !isNotEmpty(name) || !isNotEmpty(surname) || 
             !isValidEmail(email) || !isNotEmpty(phone) || !isNotEmpty(password)) {
             request.setAttribute("error", "All fields must be valid and non-empty");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
-
+        
+        // Create connection and check if email already exists
+        // If it exists, return error message
         try (Connection conn = DBUtil.getConnection()) {
             UserDAO userDAO =new UserDAO();
 
