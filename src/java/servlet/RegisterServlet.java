@@ -9,7 +9,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package servlet;
 
 
@@ -43,7 +42,6 @@ public class RegisterServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    public class RegisterServlet extends HttpServlet {
 
     private boolean isValidEmail(String email) {
         return Pattern.matches("^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$", email);
@@ -73,20 +71,25 @@ public class RegisterServlet extends HttpServlet {
         }
 
         try (Connection conn = DBUtil.getConnection()) {
+            UserDAO userDAO =new UserDAO();
 
-            if (UserDAO.emailExists(email)) {
+            if (userDAO.emailExists(email)) {
                 request.setAttribute("error", "Email already registered");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
                 return;
             }
                         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
             User user = new User(studentNo, name, surname, email, phone, hashedPassword);
-            UserDAO.saveUser(user, conn);
-
-            response.sendRedirect("login.jsp?success=true");
+            boolean success = userDAO.registerUser(user);
+            if (success) {
+                response.sendRedirect("login.jsp?success=true");
+            } else {
+                request.setAttribute("error", "Registration failed. Please try again.");
+                request.getRequestDispatcher("register.jsp").forward(request, response);
+            }
 
         } catch (Exception e) {
-            e.printStackTrace(); // Consider logging this with a proper logger
+            e.printStackTrace();
             request.setAttribute("error", "Something went wrong. Please try again.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
@@ -107,48 +110,4 @@ public class RegisterServlet extends HttpServlet {
 //            out.println("</body>");
 //            out.println("</html>");
 //        }
-    }
 
-    private boolean isValid(String email){
-        return email.matches(".+@.+\\..+");
-    }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-}
