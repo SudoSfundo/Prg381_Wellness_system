@@ -3,10 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/sfund/Desktop/Prg381_Wellness_system/web/dashboard.jsp</file>
-            <file>file:/C:/Users/sfund/Desktop/Prg381_Wellness_system/web/index.jsp</file>
-            <file>file:/C:/Users/sfund/Desktop/Prg381_Wellness_system/src/java/servlet/RegisterServlet.java</file>
-            <file>file:/C:/Users/sfund/Desktop/Prg381_Wellness_system/web/WEB-INF/web.xml</file>
+            <file>file:/C:/SkoolWerk2025/PRG381/Prg381_Wellness_system/src/java/servlet/RegisterServlet.java</file>
+            <file>file:/C:/SkoolWerk2025/PRG381/Prg381_Wellness_system/web/META-INF/context.xml</file>
+            <file>file:/C:/SkoolWerk2025/PRG381/Prg381_Wellness_system/src/java/servlet/LoginServlet.java</file>
+            <file>file:/C:/SkoolWerk2025/PRG381/Prg381_Wellness_system/src/java/model/User.java</file>
         </group>
     </open-files>
 </project-private>
