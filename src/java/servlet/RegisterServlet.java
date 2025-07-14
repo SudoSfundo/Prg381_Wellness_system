@@ -9,22 +9,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+
 package servlet;
 
-//import com.sun.jdi.connect.spi.Connection;
-import com.sun.jdi.connect.spi.Connection;
 
 import dao.DBUtil;
 import dao.UserDAO;
-import User.User;
+import model.User;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.regex.Pattern;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -42,49 +43,55 @@ public class RegisterServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    public class RegisterServlet extends HttpServlet {
+
+    private boolean isValidEmail(String email) {
+        return Pattern.matches("^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$", email);
+    }
+
+    private boolean isNotEmpty(String field) {
+        return field != null && !field.trim().isEmpty();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //recieve attributes
-        String StudentNo = request.getParameter("student_number");
+
+        String studentNo = request.getParameter("student_number");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
         
-        //Check if email is valid
-        if (!isValid(email)) {
-            request.setAttribute("error", "Invalid email format");
+               // Basic validation
+        if (!isNotEmpty(studentNo) || !isNotEmpty(name) || !isNotEmpty(surname) || 
+            !isValidEmail(email) || !isNotEmpty(phone) || !isNotEmpty(password)) {
+            request.setAttribute("error", "All fields must be valid and non-empty");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
-        
-        
-        try(Connection conn = DBUtil.getConnection()) {
-            //Check if email exists
-            if(UserDAO.emailExists(email)){
-                request.setAttribute("error", "Email already exists");
+
+        try (Connection conn = DBUtil.getConnection()) {
+
+            if (UserDAO.emailExists(email)) {
+                request.setAttribute("error", "Email already registered");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
-                return; 
+                return;
             }
-            
-            // Hash password for later
-            String hashedPas = BCrypt.hashpw(password, hashedPas);
-            
-            // Save to database 
-            User user = new User(StudentNo, name, email, hashedPas);
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            User user = new User(studentNo, name, surname, email, phone, hashedPassword);
             UserDAO.saveUser(user, conn);
-            
-            request.setAttribute("Success", "Registration successful!");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
-            
-            
-            
+
+            response.sendRedirect("login.jsp?success=true");
+
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Database Error");
+            e.printStackTrace(); // Consider logging this with a proper logger
+            request.setAttribute("error", "Something went wrong. Please try again.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
+    }
+}
         
         
 //        response.setContentType("text/html;charset=UTF-8");

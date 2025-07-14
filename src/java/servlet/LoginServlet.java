@@ -9,11 +9,11 @@
  */
 package servlet;
 
-import com.sun.jdi.connect.spi.Connection;
+import java.sql.Connection;
 
 import dao.DBUtil;
 import dao.UserDAO;
-import User.User;
+import model.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
