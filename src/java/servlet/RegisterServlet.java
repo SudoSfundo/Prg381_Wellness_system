@@ -11,20 +11,20 @@
  */
 package servlet;
 
-//import com.sun.jdi.connect.spi.Connection;
-import com.sun.jdi.connect.spi.Connection;
 
 import dao.DBUtil;
 import dao.UserDAO;
-import User.User;
+import model.User;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.Connection;
+import java.util.regex.Pattern;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
@@ -42,49 +42,59 @@ public class RegisterServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+
+    private boolean isValidEmail(String email) {
+        return Pattern.matches("^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$", email);
+    }
+
+    private boolean isNotEmpty(String field) {
+        return field != null && !field.trim().isEmpty();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //recieve attributes
-        String StudentNo = request.getParameter("student_number");
+
+        String studentNo = request.getParameter("student_number");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
         
-        //Check if email is valid
-        if (!isValid(email)) {
-            request.setAttribute("error", "Invalid email format");
+               // Basic validation
+        if (!isNotEmpty(studentNo) || !isNotEmpty(name) || !isNotEmpty(surname) || 
+            !isValidEmail(email) || !isNotEmpty(phone) || !isNotEmpty(password)) {
+            request.setAttribute("error", "All fields must be valid and non-empty");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
-        
-        
-        try(Connection conn = DBUtil.getConnection()) {
-            //Check if email exists
-            if(UserDAO.emailExists(email)){
-                request.setAttribute("error", "Email already exists");
+
+        try (Connection conn = DBUtil.getConnection()) {
+            UserDAO userDAO =new UserDAO();
+
+            if (userDAO.emailExists(email)) {
+                request.setAttribute("error", "Email already registered");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
-                return; 
+                return;
             }
-            
-            // Hash password for later
-            String hashedPas = BCrypt.hashpw(password, hashedPas);
-            
-            // Save to database 
-            User user = new User(StudentNo, name, email, hashedPas);
-            UserDAO.saveUser(user, conn);
-            
-            request.setAttribute("Success", "Registration successful!");
-            request.getRequestDispatcher("register.jsp").forward(request, response);
-            
-            
-            
+                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+            User user = new User(studentNo, name, surname, email, phone, hashedPassword);
+            boolean success = userDAO.registerUser(user);
+            if (success) {
+                response.sendRedirect("login.jsp?success=true");
+            } else {
+                request.setAttribute("error", "Registration failed. Please try again.");
+                request.getRequestDispatcher("register.jsp").forward(request, response);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Database Error");
+            request.setAttribute("error", "Something went wrong. Please try again.");
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
+    }
+}
         
         
 //        response.setContentType("text/html;charset=UTF-8");
@@ -100,48 +110,4 @@ public class RegisterServlet extends HttpServlet {
 //            out.println("</body>");
 //            out.println("</html>");
 //        }
-    }
 
-    private boolean isValid(String email){
-        return email.matches(".+@.+\\..+");
-    }
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-}
