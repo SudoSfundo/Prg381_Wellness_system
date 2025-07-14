@@ -11,7 +11,8 @@ import dao.PasswordUtil;
 
 import java.sql.*;
 
-public class UserDAO{
+public class UserDAO {
+
     public boolean emailExists(String email) {
         String sql = "SELECT 1 FROM Users WHERE email = ?";
         try (Connection conn = DBUtil.getConnection();
@@ -25,8 +26,9 @@ public class UserDAO{
             e.printStackTrace();
             return false;
         }
-}
-     public boolean registerUser(User user) {
+    }
+
+    public boolean registerUser(User user) {
         String sql = "INSERT INTO Users (student_number, name, surname, email, phone, password) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
@@ -73,6 +75,26 @@ public class UserDAO{
             e.printStackTrace();
         }
 
+        return null;
+    }
+
+    // Add this method to fetch user by email for authentication
+    public static User findByEmail(String email, Connection conn) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setStudentNumber(rs.getString("student_number"));
+                user.setName(rs.getString("name"));
+                user.setSurname(rs.getString("surname"));
+                user.setEmail(rs.getString("email"));
+                user.setPhone(rs.getString("phone"));
+                user.setPassword(rs.getString("password"));
+                return user;
+            }
+        }
         return null;
     }
 }
