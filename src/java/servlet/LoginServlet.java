@@ -9,7 +9,6 @@
  */
 package servlet;
 
-
 // imports 
 import dao.DBUtil;
 import dao.UserDAO;
@@ -29,25 +28,25 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Barend Blom 600228
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+@WebServlet(name = "LoginServlet", urlPatterns = { "/LoginServlet" })
 public class LoginServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        
-        // check if inputs are filled in 
+
+        // check if inputs are filled in
         if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             request.setAttribute("error", "Email and password are required");
             request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -55,46 +54,32 @@ public class LoginServlet extends HttpServlet {
         }
 
         // Create connection
-        try(Connection conn = DBUtil.getConnection()) {
-          User user = UserDAO.findByEmail(email, conn);
-          
+        try (Connection conn = DBUtil.getConnection()) {
+            User user = UserDAO.findByEmail(email, conn);
+
             if (user == null || user.getPassword() == null || !BCrypt.checkpw(password, user.getPassword())) {
                 request.setAttribute("error", "Invalid credentials");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
                 return;
             }
-            
+
             HttpSession session = request.getSession();
-            
+
             session.setAttribute("studentNumber", user.getStudentNumber());
             session.setAttribute("name", user.getName());
-            
+
             // Go to Dashboard
             response.sendRedirect("dashboard.jsp");
-            
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Database Error");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
-        
-//        response.setContentType("text/html;charset=UTF-8");
-//        try (PrintWriter out = response.getWriter()) {
-//            /* TODO output your page here. You may use following sample code. */
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>Servlet LoginServlet</title>");
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-//            out.println("</body>");
-//            out.println("</html>");
-//        }
+
     }
-    
-        @Override
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);

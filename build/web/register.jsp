@@ -5,6 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,6 +33,9 @@
         <div class="split-form">
             <form id="registerForm" action="RegisterServlet" method="post">
                 <h1>Create Account</h1>
+                <% if (request.getAttribute("error") != null) { %>
+                    <div class="error-message"><%= request.getAttribute("error") %></div>
+                <% } %>
                 <div class="form-group">
                     <label for="register-name">Name:</label>
                     <input
@@ -42,6 +46,19 @@
                         required
                         pattern="^[A-Za-z]+ [A-Za-z]+$"
                         title="Please enter your name and surname separated by a space"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">Phone Number:</label>
+                    <input
+                        id="register-phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="0812345678"
+                        class="input-field"
+                        required
+                        pattern="^0[6-8][0-9]{8}$"
+                        title="Enter a valid South African phone number (e.g., 0812345678)"
                     />
                 </div>
                 <div class="form-group">

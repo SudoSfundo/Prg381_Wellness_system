@@ -22,10 +22,14 @@ public class DBUtil {
     static {
              try (InputStream input = DBUtil.class.getClassLoader().getResourceAsStream("db.properties")) {
             props.load(input);
-            
-            } catch (IOException e) {
-            throw new ExceptionInInitializerError("Could not load database properties");
-        }
+            Class.forName("org.postgresql.Driver");
+            } 
+            catch (IOException | ClassNotFoundException e) {
+                if(e instanceof IOException){
+                throw new ExceptionInInitializerError("Could not load database properties");
+                }
+            throw new RuntimeException("PostgreSQL driver not found", e);
+            }
     }
 
     public static Connection getConnection() throws SQLException {

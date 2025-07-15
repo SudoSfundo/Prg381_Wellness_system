@@ -32,6 +32,11 @@
         <div class="split-form">
             <form id="loginForm" action="LoginServlet" method="post">
                 <h1>Login</h1>
+                <% if (request.getParameter("error") != null) { %>
+                    <div class="error-message"><%= request.getParameter("error") %></div>
+                <% } else if (request.getAttribute("error") != null) { %>
+                    <div class="error-message"><%= request.getAttribute("error") %></div>
+                <% } %>
                 <div class="form-group">
                     <label for="login-email">Email:</label>
                     <input id="login-email" name="email" type="email" placeholder="Email" class="input-field" required />

@@ -5,6 +5,11 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<% 
+    if (session.getAttribute("name") == null ){
+        response.sendRedirect("login.jsp?error=You should not be there yet. Please Log In");
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,13 +29,13 @@
     </div>
     <div class="main-header-right">
         <div class="user-status logged-in" id="loginStatus">
-            Logged in as <span id="userName">Student</span>
+            Logged in as <span id="userName"><%=session.getAttribute("name")%></span>
         </div>
     </div>
 </header>
 <main class="dashboard-main">
     <section class="dashboard-welcome">
-        <h1>Welcome back, <span id="userNameMain">Student</span>!</h1>
+        <h1>Welcome back, <span id="userNameMain"><%=session.getAttribute("name")%></span>!</h1>
         <p>Manage your wellness journey with our comprehensive services.</p>
     </section>
     <section class="dashboard-grid">
@@ -71,7 +76,7 @@ function navigateToAppointments() { alert('Navigate to Appointments Management')
 function navigateToCounselors() { alert('Navigate to Counselors Directory'); }
 function navigateToFeedback() { alert('Navigate to Feedback System'); }
 function navigateToProfile() { alert('Navigate to Personal Dashboard'); }
-function logout() { window.location.href = 'logout.jsp'; } // Update with actual logout path
+function logout() { window.location.href = 'LogoutServlet'; } 
 </script>
 </body>
 </html>

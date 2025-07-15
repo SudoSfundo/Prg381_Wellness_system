@@ -276,6 +276,15 @@ body.dark-mode .main-header {
     color: var(--overlay-text);
 }
 
+.error-message {
+    color: #fc0202;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+}
+
 /* =========================
    Home Page
    ========================= */

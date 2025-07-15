@@ -5,6 +5,7 @@
 // - Use prepared statements to prevent SQL injection
 
 package dao;
+
 import model.User;
 import dao.DBUtil;
 import dao.PasswordUtil;
@@ -14,9 +15,9 @@ import java.sql.*;
 public class UserDAO {
 
     public boolean emailExists(String email) {
-        String sql = "SELECT 1 FROM Users WHERE email = ?";
+        String sql = "SELECT 1 FROM users WHERE email = ?";
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -29,12 +30,12 @@ public class UserDAO {
     }
 
     public boolean registerUser(User user) {
-        String sql = "INSERT INTO Users (student_number, name, surname, email, phone, password) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (student_number, name, surname, email, phone, password) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, user.getStudentNumber());
+            stmt.setInt(1, Integer.parseInt(user.getStudentNumber()));
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getSurname());
             stmt.setString(4, user.getEmail());
@@ -50,10 +51,10 @@ public class UserDAO {
     }
 
     public User authenticate(String email, String rawPassword) {
-        String sql = "SELECT * FROM Users WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
 
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -80,7 +81,7 @@ public class UserDAO {
 
     // Add this method to fetch user by email for authentication
     public static User findByEmail(String email, Connection conn) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE email = ?";
+        String sql = "SELECT * FROM users WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();

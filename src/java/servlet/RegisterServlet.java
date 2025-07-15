@@ -24,23 +24,22 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  *
  * @author Barend Blom 600228
  */
-@WebServlet(name = "RegisterServlet", urlPatterns = {"/RegisterServlet"})
+@WebServlet(name = "RegisterServlet", urlPatterns = { "/RegisterServlet" })
 public class RegisterServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
 
     // Method to validate email format
@@ -58,62 +57,50 @@ public class RegisterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Retrieve form data
-        String studentNo = request.getParameter("student_number");
-        String name = request.getParameter("name");
-        String surname = request.getParameter("surname");
-        String email = request.getParameter("email");
+        // Read inputs from form
+        String nameAndSurname = request.getParameter("name");
         String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
         String password = request.getParameter("password");
-        
-        // Basic validation
-        if (!isNotEmpty(studentNo) || !isNotEmpty(name) || !isNotEmpty(surname) || 
-            !isValidEmail(email) || !isNotEmpty(phone) || !isNotEmpty(password)) {
+
+        // Validate inputs
+        if (!isNotEmpty(nameAndSurname) || !isNotEmpty(phone) || !isValidEmail(email) || !isNotEmpty(password)) {
             request.setAttribute("error", "All fields must be valid and non-empty");
             request.getRequestDispatcher("register.jsp").forward(request, response);
             return;
         }
-        
-        // Create connection and check if email already exists
-        // If it exists, return error message
+
+        // Split name and surname
+        String[] parts = nameAndSurname.trim().split(" ", 2);
+        String name = parts.length > 0 ? parts[0] : "";
+        String surname = parts.length > 1 ? parts[1] : "";
+
+        // Extract student number from email
+        String studentNo = email.substring(0, 6);
+
         try (Connection conn = DBUtil.getConnection()) {
-            UserDAO userDAO =new UserDAO();
+            UserDAO userDAO = new UserDAO();
 
             if (userDAO.emailExists(email)) {
                 request.setAttribute("error", "Email already registered");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
                 return;
             }
-                        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-            User user = new User(studentNo, name, surname, email, phone, hashedPassword);
+
+            User user = new User(studentNo, name, surname, email, phone, password);
             boolean success = userDAO.registerUser(user);
+
             if (success) {
-                response.sendRedirect("login.jsp?success=true");
+                // Registration successful, redirect to login with message
+                response.sendRedirect("login.jsp?success=Registration successful! Please log in.");
             } else {
                 request.setAttribute("error", "Registration failed. Please try again.");
                 request.getRequestDispatcher("register.jsp").forward(request, response);
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Something went wrong. Please try again.");
+            e.printStackTrace(); // This prints to Tomcat logs
+            request.setAttribute("error", "Something went wrong: " + e.getMessage());
             request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 }
-        
-        
-//        response.setContentType("text/html;charset=UTF-8");
-//        try (PrintWriter out = response.getWriter()) {
-//            /* TODO output your page here. You may use following sample code. */
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>Servlet RegisterServlet</title>");
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>Servlet RegisterServlet at " + request.getContextPath() + "</h1>");
-//            out.println("</body>");
-//            out.println("</html>");
-//        }
-
