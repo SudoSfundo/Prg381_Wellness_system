@@ -32,6 +32,9 @@
         <div class="split-form">
             <form id="loginForm" action="LoginServlet" method="post">
                 <h1>Login</h1>
+                <% if (request.getParameter("success") != null) { %>
+                    <div class="success-message"><%= request.getParameter("success") %></div>
+                <% } %>
                 <% if (request.getParameter("error") != null) { %>
                     <div class="error-message"><%= request.getParameter("error") %></div>
                 <% } else if (request.getAttribute("error") != null) { %>
